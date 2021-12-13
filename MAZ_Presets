@@ -1,0 +1,82 @@
+// ==UserScript==
+// @name         Map Presets in MAZ
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  try to take over the world!
+// @author       You
+// @match        https://trimps.github.io/
+// @match        http://trimps.github.io/
+// @icon         https://www.google.com/s2/favicons?domain=racinante.com
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    'use strict';
+    // Your code here...
+    function newMazTrap(f) {
+        return new Proxy(f, {
+            apply(target, thisArg, args) {
+                // Do these things before the trapped function runs
+                // Run Function
+                f(...args);
+                // Do these things after the trapped function runs
+                if (args[0] == "Set Map At Zone") {
+                    doUpdatePresets();
+                }
+            }
+        })
+    }
+    tooltip = newMazTrap(tooltip); // find tooltip caller, use this instead
+
+    function doUpdatePresets() {
+        var mazRows = [];
+        var mRow ;
+        for (let i=0; i < 8 ; i++) {
+            mRow = "mazPreset"+i.toString();
+            if (document.getElementById(mRow)) {mazRows[i] = document.getElementById(mRow);};
+        }
+        for (let i=0; i < mazRows.length ; i++) {
+            console.log("mazRows[0] "+ JSON.stringify(mazRows[0]));
+            //classList.contains
+            var myOptions = mazRows[i];
+            console.log("Options "+ myOptions.length);
+            for (let j=0; j < myOptions.length; j++) {
+                switch (j) {
+                    case 0: {
+                        if (myOptions[j].text == "Preset 1") {myOptions[j].text = definePreset(1)};
+                        break;
+                    }
+                    case 1: {
+                        if (myOptions[j].text == "Preset 2") {myOptions[j].text = definePreset(2)};
+                        break;
+                    }
+                    case 2: {
+                        if (myOptions[j].text == "Preset 3") {myOptions[j].text = definePreset(3)};
+                        break;
+                    }
+                    case 3: {
+                        if (myOptions[j].text == "Preset 4") {myOptions[j].text = definePreset(4)};
+                        break;
+                    }
+                    case 4: {
+                        if (myOptions[j].text == "Preset 5") {myOptions[j].text = definePreset(5)};
+                        break;
+                    }
+                    default: {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    function definePreset (p) {
+        var zindex = "p"+p.toString();
+        var zPreset = (game.global.universe==2)?game.global.mapPresets2:game.global.mapPresets;
+        var zextra = (zPreset[zindex].offset)?zPreset[zindex].offset:"+"+zPreset[zindex].extra;
+        var zspecial = zPreset[zindex].specMod;
+        var zbiome = zPreset[zindex].biome=="Plentiful"?"Gardens":zPreset[zindex].biome;
+        if (zextra == "d") {zextra = "";}
+        (zspecial == 0) ? zspecial = "": zspecial = zspecial.toUpperCase();
+        return(zspecial + zextra+" "+zbiome);
+    }
+})();
