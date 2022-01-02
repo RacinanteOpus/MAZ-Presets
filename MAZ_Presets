@@ -36,10 +36,10 @@
             if (document.getElementById(mRow)) {mazRows[i] = document.getElementById(mRow);};
         }
         for (let i=0; i < mazRows.length ; i++) {
-            console.log("mazRows[0] "+ JSON.stringify(mazRows[0]));
+            //console.log("mazRows[0] "+ JSON.stringify(mazRows[0]));
             //classList.contains
             var myOptions = mazRows[i];
-            console.log("Options "+ myOptions.length);
+            //console.log("Options "+ myOptions.length);
             for (let j=0; j < myOptions.length; j++) {
                 switch (j) {
                     case 0: {
